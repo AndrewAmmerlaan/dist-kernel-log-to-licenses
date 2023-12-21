@@ -56,7 +56,7 @@ while read -r line; do
 		unknown+=( ${line} )
 	fi
 
-done < <( sed -n -e 's/^dracut\[D\]:.*root     root.*:[0-9][0-9] /\//g' -e 's/\ ->.*$//gp' "${log_file}" )
+done < <( sed -n -e 's/^dracut\[D\]:.*root     root.*:[0-9][0-9] /\//gp' -e 's/\ ->.*$//gp' "${log_file}" )
 
 IFS=$'\n' sorted=($(sort -u <<<"${out[*]}"))
 
