@@ -26,12 +26,10 @@ while read -r line; do
 		continue
 	fi
 
-	if [[ ! -f ${line} ]]; then
-		unknown+=( ${line} )
-		continue
+	realpath=$(realpath "${line}" &>/dev/null)
+	if [[ ! ${realpath} ]]; then
+		realpath="${line}"
 	fi
-
-	realpath=$(realpath "${line}")
 	# Dracut sometimes moves /sbin/ files into /bin/ of the initrd
 	sbin_opt=${line//bin/sbin}
 	# Try several options to accommodate for merged-usr and symlinks
