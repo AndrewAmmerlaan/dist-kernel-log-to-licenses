@@ -32,11 +32,13 @@ while read -r line; do
 	fi
 
 	realpath=$(realpath "${line}")
+	# Dracut sometimes moves /sbin/ files into /bin/ of the initrd
+	sbin_opt=${line//bin/sbin}
 	# Try several options to accommodate for merged-usr and symlinks
 	for try in \
 		"${realpath}" "/usr${realpath}" "${realpath//\/usr/}" \
 		"${line}" "/usr${line}" "${line//\/usr/}" \
-		$(basename "${line}")
+		"${sbin_opt}" "/usr${sbin_opt}" "${sbin_opt//\/usr/}"
 	do
 		owner=$(qfile -q "${try}")
 		if [[ ${owner} ]]; then
@@ -49,8 +51,6 @@ while read -r line; do
 		owner_licenses=$(eix -I -e --format '<licenses>\n' ${owner})
 		echo "${line} is owned by ${owner} which has licenses ${owner_licenses}"
 		out+=( "[\"${owner}\"]=\"${owner_licenses}\"" )
-	elif [[ ${line} == /lib/modules/*-gentoo-dist* ]]; then
-		echo "${line} is a kernel module"
 	else
 		echo "${line} has no known owner"
 		unknown+=( ${line} )
